@@ -8,6 +8,14 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type Adapter interface {
+	Has(string) bool
+	Get(string) (string, error)
+	Set(string, string) error
+	Remove(string) error
+	Keys() []string
+}
+
 type Keyv struct {
 	AdapterName string
 	Adapter     Adapter
@@ -63,15 +71,14 @@ func (k *Keyv) Remove(key string) error {
 
 // Clear remove all data in DB with the same namespace
 func (k *Keyv) Clear() error {
-	return k.Adapter.Clear()
-}
+	keys := k.Adapter.Keys()
+	for _, key := range keys {
+		if err := k.Adapter.Remove(key); err != nil {
+			return err
+		}
+	}
 
-type Adapter interface {
-	Has(string) bool
-	Get(string) (string, error)
-	Set(string, string) error
-	Remove(string) error
-	Clear() error
+	return nil
 }
 
 var (
