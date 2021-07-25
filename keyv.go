@@ -9,21 +9,31 @@ import (
 )
 
 type AdapterNewer interface {
+	// Cnnect return a keyv adapter by the given uri
 	Connect(uri string) (Adapter, error)
 }
 
 type Adapter interface {
+	// Has checks if key exists
 	Has(key string) bool
+	// Get returns value by key
 	Get(key string) (string, error)
+	// Set sets value by key
 	Set(key string, val string) error
+	// Remove removes value by key
 	Remove(key string) error
+	// Keys return all keys in this namespace
 	Keys() ([]string, error)
 }
 
 type Keyv struct {
+	// AdapterName is the name of used adapter
 	AdapterName string
+	// Adapter is the used adapter
 	Adapter     Adapter
+	// Uri is the used uri
 	Uri         string
+	// Namespace will be automatically add before key
 	Namespace   string
 }
 
