@@ -17,7 +17,7 @@ type Adapter interface {
 	Get(key string) (string, error)
 	Set(key string, val string) error
 	Remove(key string) error
-	Keys() []string
+	Keys() ([]string, error)
 }
 
 type Keyv struct {
