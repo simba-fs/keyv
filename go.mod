@@ -1,4 +1,4 @@
-module github.com/simba-fs/keyv
+module github.com/simba-fs/keyv/v1
 
 go 1.16
 
