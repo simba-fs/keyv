@@ -1,5 +1,5 @@
-module github.com/simba-fs/keyv/v1
+module github.com/simba-fs/keyv
 
 go 1.16
 
-require github.com/mattn/go-sqlite3 v1.14.8 // indirect
+require github.com/mattn/go-sqlite3 v1.14.8
