@@ -8,11 +8,15 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type AdapterNewer interface {
+	Connect(uri string) (Adapter, error)
+}
+
 type Adapter interface {
-	Has(string) bool
-	Get(string) (string, error)
-	Set(string, string) error
-	Remove(string) error
+	Has(key string) bool
+	Get(key string) (string, error)
+	Set(key string, val string) error
+	Remove(key string) error
 	Keys() []string
 }
 
@@ -82,42 +86,47 @@ func (k *Keyv) Clear() error {
 }
 
 var (
-	ErrAdapterNotFound   = errors.New("adapter not found")
-	ErrAdapterNameExists = errors.New("adapter name exists")
+	ErrAdapterNewerNotFound   = errors.New("adapter newer not found")
+	ErrAdapterNewerNameExists = errors.New("adapter newer name exists")
 )
 
-var adapters = map[string]Adapter{}
+var adapterNewers = map[string]AdapterNewer{}
 
-// Register add a new adapter with name
-func Register(name string, adapter Adapter) error {
-	_, ok := adapters[name]
+// Register add a new adapter newer with name
+func Register(name string, adapterNewer AdapterNewer) error {
+	_, ok := adapterNewers[name]
 	if ok {
-		return ErrAdapterNameExists
+		return ErrAdapterNewerNameExists
 	}
 
-	adapters[name] = adapter
+	adapterNewers[name] = adapterNewer
 	return nil
 }
 
 // New create a keyv object
-func New(uri string, namespace string) Keyv {
+func New(uri string, namespace string) (*Keyv, error) {
 	adapterName := strings.SplitN(uri, "://", 2)[0]
 
-	adapter, ok := adapters[adapterName]
+	newer, ok := adapterNewers[adapterName]
 	if !ok {
-		panic(ErrAdapterNotFound)
+		return nil, ErrAdapterNewerNotFound
+	}
+
+	adapter, err := newer.Connect(uri)
+	if err != nil {
+		return nil, err
 	}
 
 	if namespace == "" {
 		namespace = "default"
 	}
 
-	keyv := Keyv{
+	keyv := &Keyv{
 		AdapterName: adapterName,
 		Adapter:     adapter,
 		Uri:         uri,
 		Namespace:   namespace,
 	}
 
-	return keyv
+	return keyv, nil
 }
