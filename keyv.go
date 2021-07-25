@@ -75,7 +75,11 @@ func (k *Keyv) Remove(key string) error {
 
 // Clear remove all data in DB with the same namespace
 func (k *Keyv) Clear() error {
-	keys := k.Adapter.Keys()
+	keys, err := k.Adapter.Keys()
+	if err != nil {
+		return err
+	}
+
 	for _, key := range keys {
 		if err := k.Adapter.Remove(key); err != nil {
 			return err
