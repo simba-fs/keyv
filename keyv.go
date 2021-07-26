@@ -45,6 +45,9 @@ func (k *Keyv) addNS(key string) string {
 
 // Has check if key exists in the db
 func (k *Keyv) Has(key string) bool {
+	// add namespace
+	key = k.addNS(key)
+
 	return k.Adapter.Has(key)
 }
 
