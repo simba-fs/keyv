@@ -94,7 +94,7 @@ func (k *Keyv) Remove(key string) error {
 	// add namespace
 	key = k.addNS(key)
 
-	return k.Remove(key)
+	return k.Adapter.Remove(key)
 }
 
 // Clear remove all data in DB with the same namespace
