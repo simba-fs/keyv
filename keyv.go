@@ -14,6 +14,7 @@ type AdapterNewer interface {
 }
 
 type Adapter interface {
+
 	// Has checks if key exists
 	Has(key string) bool
 	// Get returns value by key
@@ -30,16 +31,21 @@ type Keyv struct {
 	// AdapterName is the name of used adapter
 	AdapterName string
 	// Adapter is the used adapter
-	Adapter     Adapter
+	Adapter Adapter
 	// Uri is the used uri
-	Uri         string
+	Uri string
 	// Namespace will be automatically add before key
-	Namespace   string
+	Namespace string
 }
 
 // addNS add namespace to key
 func (k *Keyv) addNS(key string) string {
 	return "keyv:" + k.Namespace + ":" + key
+}
+
+// Has check if key exists in the db
+func (k *Keyv) Has(key string) bool {
+	return k.Adapter.Has(key)
 }
 
 // Get value from DB with key
