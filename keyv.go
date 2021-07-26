@@ -23,7 +23,7 @@ type Adapter interface {
 	// Remove removes value by key
 	Remove(key string) error
 	// Clear remove all data in this namespace
-	Clear() error
+	Clear(namespace string) error
 	// Keys return all keys in this namespace
 	Keys() ([]string, error)
 }
@@ -100,7 +100,7 @@ func (k *Keyv) Remove(key string) error {
 
 // Clear remove all data in DB with the same namespace
 func (k *Keyv) Clear() error {
-	return k.Adapter.Clear()
+	return k.Adapter.Clear(k.Namespace)
 }
 
 var (
