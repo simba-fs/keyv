@@ -14,7 +14,6 @@ type AdapterNewer interface {
 }
 
 type Adapter interface {
-
 	// Has checks if key exists
 	Has(key string) bool
 	// Get returns value by key
@@ -23,6 +22,8 @@ type Adapter interface {
 	Set(key string, val string) error
 	// Remove removes value by key
 	Remove(key string) error
+	// Clear remove all data in this namespace
+	Clear() error
 	// Keys return all keys in this namespace
 	Keys() ([]string, error)
 }
@@ -99,18 +100,7 @@ func (k *Keyv) Remove(key string) error {
 
 // Clear remove all data in DB with the same namespace
 func (k *Keyv) Clear() error {
-	keys, err := k.Adapter.Keys()
-	if err != nil {
-		return err
-	}
-
-	for _, key := range keys {
-		if err := k.Adapter.Remove(key); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return k.Adapter.Clear()
 }
 
 var (
