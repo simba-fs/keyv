@@ -51,6 +51,11 @@ func (k *Keyv) Has(key string) bool {
 	return k.Adapter.Has(key)
 }
 
+// Keys return all keys in this namespace
+func (k *Keyv) Keys() ([]string, error) {
+	return k.Adapter.Keys()
+}
+
 // Get value from DB with key
 func (k *Keyv) Get(key string, v interface{}) error {
 	// add namespace
