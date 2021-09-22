@@ -67,7 +67,8 @@ func (k *Keyv) Keys() ([]string, error) {
 
 	for _, v := range(names){
 		if strings.HasPrefix(v, "keyv:" + k.Namespace) {
-			results = append(results, v)
+			name := strings.SplitN(v, ":", 3)[2]
+			results = append(results, name)
 		}
 	}
 
