@@ -66,7 +66,7 @@ func (k *Keyv) Keys() ([]string, error) {
 	results :=  make([]string, 0)
 
 	for _, v := range(names){
-		if strings.HasPrefix(v, k.Namespace) {
+		if strings.HasPrefix(v, "keyv:" + k.Namespace) {
 			results = append(results, v)
 		}
 	}
