@@ -27,7 +27,7 @@ type Adapter interface {
 	// Remove removes value by key
 	Remove(key string) error
 	// Clear remove all data in this namespace
-	Clear(namespace string) error
+	Clear(prefix string) error
 	// Keys return all keys in this namespace
 	Keys() ([]string, error)
 }
@@ -58,7 +58,20 @@ func (k *Keyv) Has(key string) bool {
 
 // Keys return all keys in this namespace
 func (k *Keyv) Keys() ([]string, error) {
-	return k.Adapter.Keys()
+	names, err := k.Adapter.Keys()
+	if err != nil {
+		return names, err
+	}
+
+	results :=  make([]string, 0)
+
+	for _, v := range(names){
+		if strings.HasPrefix(v, k.Namespace) {
+			results = append(results, v)
+		}
+	}
+
+	return results, nil
 }
 
 // Get value from DB with key
@@ -123,7 +136,7 @@ func (k *Keyv) Remove(key string) error {
 
 // Clear remove all data in DB with the same namespace
 func (k *Keyv) Clear() error {
-	return k.Adapter.Clear(k.Namespace)
+	return k.Adapter.Clear("keyv:" + k.Namespace)
 }
 
 var (
@@ -133,7 +146,7 @@ var (
 
 var adapterNewers = map[string]AdapterNewer{}
 
-// Register add a new adapter newer with name
+// Register add a new adapter newer with name. It should only be called in adapter package
 func Register(name string, adapterNewer AdapterNewer) error {
 	_, ok := adapterNewers[name]
 	if ok {
