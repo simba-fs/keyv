@@ -8,6 +8,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+var (
+	ErrKeyNotFound = errors.New("key not found in namespace")
+)
+
 type AdapterNewer interface {
 	// Cnnect return a keyv adapter by the given uri
 	Connect(uri string) (Adapter, error)
@@ -64,7 +68,7 @@ func (k *Keyv) Get(key string, v interface{}) error {
 
 	// check if key exists
 	if !k.Adapter.Has(key) {
-		return nil
+		return ErrKeyNotFound
 	}
 
 	// get raw data
@@ -76,6 +80,25 @@ func (k *Keyv) Get(key string, v interface{}) error {
 	// convert json into go struct
 	return json.Unmarshal([]byte(data), v)
 }
+
+func (k *Keyv) GetString(key string) (string, error){
+	s := ""
+	err := k.Get(key, &s)
+	return s, err
+}
+
+func (k *Keyv) GetInt(key string) (int, error){
+	s := 0
+	err := k.Get(key, &s)
+	return s, err
+}
+
+func (k *Keyv) GetBool(key string) (bool, error){
+	s := false
+	err := k.Get(key, &s)
+	return s, err
+}
+
 
 // Set value with key in DB
 func (k *Keyv) Set(key string, value interface{}) error {
